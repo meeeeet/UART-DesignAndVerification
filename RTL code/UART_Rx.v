@@ -2,7 +2,7 @@ module uart_slave(
     input clk,    //clock
     input u_rx,    //input form another uart
     output [7:0]data,  //output to main bus or other module
-    output reg en_rx, //enable signal to Rx UART
+    input en_rx, //enable signal to Rx UART
     output reg u_rx_done //Rx is done
 );
 
@@ -21,7 +21,7 @@ always @(negedge clk ) begin
     
     case (state_rx)
     IDLE: begin
-        if (!u_rx) begin
+        if ((!u_rx)&(en_rx)) begin
             state_rx <= DATA;
             count <= 0;
             u_rx_done <= 0;
