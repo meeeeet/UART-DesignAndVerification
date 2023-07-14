@@ -24,28 +24,28 @@ parameter DONE = 3'b100;
 always @(negedge clk ) begin
     case (state_tx)
 
-    IDLE: begin
-        if (en_tx) begin
-            state_tx <= START;
-            din <= data;
-        end
-        else
-        begin
-            u_tx <= 1'bz;
-            state_tx <= IDLE;
-        end
-    end
-
     START: begin
-        u_tx <= 0;
-        state_tx <= DATA;
-        count <= 0;
-        u_tx_done <= 0;
+        if (en_tx) begin
+            state_tx <= DATA;
+            din <= data;
+            u_tx <= 0;
+            u_tx_done <= 0;
+            count <= 0;
+        end
+        else begin
+            u_tx <= 1'bz;
+            // state_tx <= START;
+        end
+        // u_tx <= 0;
+        // state_tx <= DATA;
+        // count <= 0;
+        
     end
 
     DATA: begin
         count <= count + 1;
-        if (count == 0) begin
+        if (count == 3'b111) begin
+            u_tx <= din[count];
             state_tx <= PARITY;
         end
         else u_tx <= din[count];
@@ -59,13 +59,14 @@ always @(negedge clk ) begin
     DONE: begin
         u_tx_done <= 1;
         u_tx <= 0;
-        state_tx <= IDLE;
+        state_tx <= START;
     end
     
     default: begin
-        state_tx <= IDLE;
+        state_tx <= START;
     end
     endcase
 end
 
 endmodule
+  

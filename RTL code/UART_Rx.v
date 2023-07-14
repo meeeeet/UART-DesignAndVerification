@@ -7,7 +7,7 @@ module uart_slave(
 );
 
 reg [2:0] state_rx;
-reg [2:0] count;
+reg [3:0] count;
 reg [7:0] dout;
 
 
@@ -21,27 +21,38 @@ always @(negedge clk ) begin
     
     case (state_rx)
     IDLE: begin
-        if ((!u_rx)&(en_rx)) begin
-            state_rx <= DATA;
+        if (en_rx) begin
             count <= 0;
             u_rx_done <= 0;
         end
         else begin
             state_rx <= IDLE;
         end
+
+        if (u_rx == 0) begin
+            state_rx <= DATA;
+        end
+        else begin
+                state_rx <= IDLE;
+        end
+
     end
 
     DATA: begin
-        count <= count + 1;
-        if (count == 0) begin
+        dout[count] <= u_rx;
+        if (count == 3'b111) begin
             state_rx <= PARITY;
         end
-        else dout[count] <= u_rx;
+        else begin
+            state_rx <= DATA;
+            count <= count + 1;
+        end
     end
 
     PARITY: begin
         if (u_rx == ^dout) begin
             state_rx <= DONE;
+          	 u_rx_done <= 1;
         end
         else begin
             state_rx <= IDLE;
@@ -49,7 +60,6 @@ always @(negedge clk ) begin
     end
 
     DONE: begin
-        u_rx_done <= 1;
         state_rx <= IDLE;
     end
 
@@ -60,6 +70,6 @@ always @(negedge clk ) begin
     endcase
 end
 
-assign data = ((state_rx == DONE)&(en_rx)) ? dout : 8'b0;
+assign data = ((state_rx == DONE)&(en_rx)) ? dout : 8'bzzzzzzzz;
 
 endmodule

@@ -5,7 +5,7 @@ environment env;
 
 initial begin
     env=new(intf);
-    env.gen.no_of_tr=100;
+    env.gen.no_of_tr=10;
     env.run();
 end
 

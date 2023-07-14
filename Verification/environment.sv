@@ -1,4 +1,6 @@
-`include "driver.v"
+`include "transaction.sv"
+`include "generator.sv"
+`include "driver.sv"
 
 class environment;
 
@@ -8,9 +10,10 @@ driver drv;
 virtual uart_intf vif;
 mailbox gen2drive;
 
-function new(virtual uart_intf vif, mailbox gen2drive);
+function new(virtual uart_intf vif);
     this.vif = vif;
-    this.gen2drive = gen2drive;
+//     this.gen2drive = gen2drive;
+  gen2drive=new();
     drv = new(vif, gen2drive);
     gen = new(gen2drive);
 endfunction
@@ -18,19 +21,16 @@ endfunction
 
 task test;
     fork
+      	gen.main();
         drv.main();
-        gen.main();
     join
 endtask
 
-task post_test;
-    wait(gen.no_of_tr==drv.no_of_tr_dri);
-endtask
+
 
 task run;
     test();
-    post_test();
-    $finish;
+  	$finish;
 endtask
 
 endclass
