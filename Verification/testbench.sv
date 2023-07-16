@@ -40,7 +40,20 @@ uart_slave slave(
 
 test_main t1(intf);
 
+  covergroup funcov @(posedge intf.rx_done);
+    Tx_cover: coverpoint intf.data_tx{
+      bins b1_tx[]={[0:$]};
+    }
+    
+    Rx_cover: coverpoint intf.data_rx{
+      bins b1_rx[]={[0:$]};
+    }
+  endgroup
+  
 initial begin
+  	
+  	funcov c1;
+  c1=new();
     $dumpfile("dump.vcd");
     $dumpvars;
 end

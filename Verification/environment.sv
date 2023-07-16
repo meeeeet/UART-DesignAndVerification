@@ -13,7 +13,7 @@ mailbox gen2drive;
 function new(virtual uart_intf vif);
     this.vif = vif;
 //     this.gen2drive = gen2drive;
-  gen2drive=new();
+  gen2drive=new(1);
     drv = new(vif, gen2drive);
     gen = new(gen2drive);
 endfunction
@@ -23,7 +23,7 @@ task test;
     fork
       	gen.main();
         drv.main();
-    join
+    join_any
 endtask
 
 

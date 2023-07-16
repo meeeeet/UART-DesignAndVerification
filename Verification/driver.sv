@@ -1,5 +1,4 @@
 
-
 class driver;
 
     mailbox gen2drive;
@@ -15,21 +14,26 @@ class driver;
      
     endfunction //new()
 
+  
+  
 
     task main();
-      repeat (10)
+      forever
         begin
             transaction t1;
             gen2drive.get(t1);
 
           	wait(vif.en_tx);
             vif.data_tx = t1.data_tx;
-
-          wait(vif.data_tx == vif.data_rx);
-//           wait(vif.rx_done);
+          	
+//           @(negedge vif.clk);
+          repeat(11) begin
+            @(negedge vif.clk);
+          end
           
-//           @(negedge vif.rx_done);
+//           	wait(vif.data_tx == vif.data_rx);
             t1.data_rx = vif.data_rx;
+          t1.__done=(vif.rx_done);
             t1.display("driver");
             no_of_tr_dri++;
         end
