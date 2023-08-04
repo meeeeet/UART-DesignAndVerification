@@ -1,7 +1,8 @@
 # Design and Verification of UART
 
-* Simple UART design for transmit and recive 8bit of information on Verilog HDL
-* Verified functionality of design with random test cases using SystemVerilog
+- Designed RTL modules of UART transmitter and receiver in Verilog HDL with 8-bit serial data transmission capability.
+- Implemented a SystemVerilog-based testbench with driver, environment, generator, and interface components, utilizing constrained 
+random test cases to effectively validate the UART functionality.
 
 ### Data format:
 
